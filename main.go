@@ -52,6 +52,8 @@ func main() {
 	eventBroadcaster.StartRecordingToSink(&typedv1core.EventSinkImpl{Interface: clientset.CoreV1().Events("")})
 	eventRecorder := eventBroadcaster.NewRecorder(scheme, v1.EventSource{})
 	eventRecorder.Event(pod, corev1.EventTypeNormal, "this is a", "test event")
+	// uncomment this to log a warning type event
+	// eventRecorder.Event(pod, corev1.EventTypeWarning, "this is a", "test event")
 	time.Sleep(time.Hour * 1)
 	eventBroadcaster.Shutdown()
 }
