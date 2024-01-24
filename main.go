@@ -6,7 +6,6 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
-	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -43,15 +42,15 @@ func main() {
 	}
 
 	scheme := runtime.NewScheme()
-	_ = corev1.AddToScheme(scheme)
+	_ = v1.AddToScheme(scheme)
 
 	// all the good events stuff is here
 	eventBroadcaster := record.NewBroadcaster()
 	// logs events to stdout at V4 level
 	eventBroadcaster.StartStructuredLogging(1)
 	eventBroadcaster.StartRecordingToSink(&typedv1core.EventSinkImpl{Interface: clientset.CoreV1().Events("")})
-	eventRecorder := eventBroadcaster.NewRecorder(scheme, v1.EventSource{})
-	eventRecorder.Event(pod, corev1.EventTypeNormal, "this is a", "test event")
+	eventRecorder := eventBroadcaster.NewRecorder(scheme, v1.EventSource{Component: "my-component"})
+	eventRecorder.Event(pod, v1.EventTypeNormal, "this is a", "test event")
 	// uncomment this to log a warning type event
 	// eventRecorder.Event(pod, corev1.EventTypeWarning, "this is a", "test event")
 	time.Sleep(time.Hour * 1)
